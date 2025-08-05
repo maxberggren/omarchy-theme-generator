@@ -1,0 +1,58 @@
+-- Alternative: Keep solarized-osaka plugin but override with our colors
+return {
+	-- Keep the solarized-osaka plugin
+	{
+		"craftzdog/solarized-osaka.nvim",
+		lazy = false,
+		priority = 1000,
+		opts = {
+			-- Override the plugin's colors with our centralized ones
+			on_colors = function(colors)
+				-- Replace plugin colors with our centralized colors
+				colors.bg = "{{base_dark_hash}}"
+				colors.bg_dark = "{{base_dark_hash}}"
+				colors.bg_float = "{{base_dark_hash}}"
+				colors.bg_highlight = "{{base_dark_hash}}"
+				colors.bg_popup = "{{base_dark_hash}}"
+				colors.bg_search = "{{accent03_hash}}"
+				colors.bg_sidebar = "{{base_dark_hash}}"
+				colors.bg_statusline = "{{base_dark_hash}}"
+				colors.bg_visual = "{{base_dark_hash}}"
+				colors.border = "{{base01_hash}}"
+				colors.comment = "{{base01_hash}}"
+				colors.fg = "{{base_middle_hash}}"
+				colors.fg_dark = "{{base01_hash}}"
+				colors.fg_float = "{{base_middle_hash}}"
+				colors.fg_gutter = "{{base01_hash}}"
+				colors.fg_sidebar = "{{base01_hash}}"
+				colors.blue = "{{accent04_hash}}"
+				colors.blue0 = "{{accent04_hash}}"
+				colors.blue1 = "{{accent04_hash}}"
+				colors.blue2 = "{{accent04_hash}}"
+				colors.blue5 = "{{accent04_hash}}"
+				colors.blue6 = "{{accent04_hash}}"
+				colors.blue7 = "{{accent04_hash}}"
+				colors.cyan = "{{accent06_hash}}"
+				colors.green = "{{accent02_hash}}"
+				colors.green1 = "{{accent02_hash}}"
+				colors.green2 = "{{accent02_hash}}"
+				colors.magenta = "{{accent05_hash}}"
+				colors.magenta2 = "{{accent05_hash}}"
+				colors.orange = "{{accent08_hash}}"
+				colors.purple = "{{accent07_hash}}"
+				colors.red = "{{accent01_hash}}"
+				colors.red1 = "{{accent01_hash}}"
+				colors.teal = "{{accent06_hash}}"
+				colors.terminal_black = "{{base_dark_hash}}"
+				colors.yellow = "{{accent03_hash}}"
+			end,
+		},
+	},
+
+	{
+		"LazyVim/LazyVim",
+		opts = {
+			colorscheme = "solarized-osaka",
+		},
+	},
+}

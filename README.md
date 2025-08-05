@@ -8,7 +8,9 @@ This is a theme for [Omarchy](https://omarchy.org) based on [solarized osaka](ht
 To install this theme either use the Omarchy TUI selecting `Themes > Install` and copying the URL of this repo or running;
 
 ```bash
-omarchy-theme-install https://github.com/maxberggren/omarchy-night-owl
+omarchy-theme-install https://github.com/maxberggren/omarchy-night-owl-theme
 ```
 
 in your terminal.
+
+If you want to use the script to generate a new theme. Take a look in ´how_to_generate_theme.md´.

@@ -1,0 +1,81 @@
+# Theme: solarized-osaka
+# By: Gemini (adapted from Solarized by Ethan Schoonover and Solarized Osaka by craftzdog)
+
+# Main bg - Solarized Osaka base03 (slightly brighter than original Solarized base03)
+theme[main_bg]="{{base_dark_hash}}"
+
+# Main text color - Solarized Osaka base00 (slightly brighter than original Solarized base0)
+theme[main_fg]="{{base_middle_hash}}"
+
+# Title color for boxes - Solarized Osaka base3 (very light background)
+theme[title]="{{base_light02_hash}}"
+
+# Highlight color for keyboard shortcuts - Solarized Osaka blue
+theme[hi_fg]="{{accent04_hash}}"
+
+# Background color of selected item in processes box - Solarized Osaka base02
+theme[selected_bg]="{{base_dark_hash}}"
+
+# Foreground color of selected item in processes box - Solarized Osaka base2
+theme[selected_fg]="{{base_light01_hash}}"
+
+# Color of inactive/disabled text - Solarized Osaka base01
+theme[inactive_fg]="{{base01_hash}}"
+
+# Misc colors for processes box including mini cpu graphs, details memory graph and details status text - Solarized Osaka cyan
+theme[proc_misc]="{{accent06_hash}}"
+
+# Cpu box outline color - Solarized Osaka base00
+theme[cpu_box]="{{base_middle_hash}}"
+
+# Memory/disks box outline color - Solarized Osaka base00
+theme[mem_box]="{{base_middle_hash}}"
+
+# Net up/down box outline color - Solarized Osaka base00
+theme[net_box]="{{base_middle_hash}}"
+
+# Processes box outline color - Solarized Osaka base00
+theme[proc_box]="{{base_middle_hash}}"
+
+# Box divider line and small boxes line color - Solarized Osaka base01
+theme[div_line]="{{base01_hash}}"
+
+# Temperature graph colors
+theme[temp_start]="{{accent02_hash}}" # Green accent
+theme[temp_mid]="{{accent03_hash}}"  # Yellow accent
+theme[temp_end]="{{accent01_hash}}"  # Red accent
+
+# CPU graph colors
+theme[cpu_start]="{{accent04_hash}}" # Blue accent
+theme[cpu_mid]="{{accent07_hash}}"  # Violet accent
+theme[cpu_end]="{{accent05_hash}}"  # Magenta accent
+
+# Mem/Disk free meter
+theme[free_start]="{{accent02_hash}}" # Green accent
+theme[free_mid]="{{accent06_hash}}"  # Cyan accent
+theme[free_end]="{{accent04_hash}}"  # Blue accent
+
+# Mem/Disk cached meter
+theme[cached_start]="{{accent03_hash}}" # Yellow accent
+theme[cached_mid]="{{accent08_hash}}"  # Orange accent
+theme[cached_end]="{{accent01_hash}}"  # Red accent
+
+# Mem/Disk available meter
+theme[available_start]="{{accent06_hash}}" # Cyan accent
+theme[available_mid]="{{accent04_hash}}"  # Blue accent
+theme[available_end]="{{accent07_hash}}"  # Violet accent
+
+# Mem/Disk used meter
+theme[used_start]="{{accent01_hash}}"  # Red accent
+theme[used_mid]="{{accent05_hash}}"  # Magenta accent
+theme[used_end]="{{accent08_hash}}"  # Orange accent
+
+# Download graph colors
+theme[download_start]="{{accent04_hash}}" # Blue accent
+theme[download_mid]="{{accent06_hash}}"  # Cyan accent
+theme[download_end]="{{accent02_hash}}"  # Green accent
+
+# Upload graph colors
+theme[upload_start]="{{accent05_hash}}"  # Magenta accent
+theme[upload_mid]="{{accent01_hash}}"  # Red accent
+theme[upload_end]="{{accent08_hash}}"  # Orange accent

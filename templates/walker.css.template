@@ -1,0 +1,6 @@
+@define-color selected-text {{accent04_hash}};
+@define-color text {{base_middle_hash}};
+@define-color base {{base_dark_hash}};
+@define-color border {{border_hash}};
+@define-color foreground {{base_middle_hash}};
+@define-color background {{base_dark_hash}};

@@ -1,0 +1,5 @@
+@define-color background-color {{base_dark_hash}};
+@define-color border-color {{base_middle_hash}};
+@define-color label {{base_light01_hash}};
+@define-color image {{base_light01_hash}};
+@define-color progress {{accent04_hash}};

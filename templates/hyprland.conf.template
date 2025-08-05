@@ -1,0 +1,6 @@
+# Hyprland Solarized Osaka Theme
+
+general {
+    col.active_border = {{base_light01_rgba_ee}} {{base_middle_rgba_ee}} 45deg
+    col.inactive_border = {{base_dark_rgba_88}}
+}

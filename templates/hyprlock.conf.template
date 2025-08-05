@@ -1,0 +1,5 @@
+$color = {{base_dark_rgba_1_0}}
+$inner_color = {{base_dark_alpha_rgba_0_8}}
+$outer_color = {{base_middle_rgba_1_0}}
+$font_color = {{base_light02_rgba_1_0}}
+$check_color = {{accent04_rgba_1_0}}

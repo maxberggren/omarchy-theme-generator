@@ -8,24 +8,24 @@ return {
 				-- Define our centralized colors
 				local colors = {
 					-- Background colors
-					bg = "#03192c",      -- Main background
-					bg_dark = "#03192c", -- Darker background
-					bg_light = "#e9e2d0", -- Light background
+					bg = "{{base_dark_hash}}",      -- Main background
+					bg_dark = "{{base_dark_hash}}", -- Darker background
+					bg_light = "{{base_light01_hash}}", -- Light background
 					
 					-- Foreground colors  
-					fg = "#7a8c91",      -- Main text
-					fg_dark = "#5f6f74", -- Dark text/comments
-					fg_light = "#7a8c91", -- Light text
+					fg = "{{base_middle_hash}}",      -- Main text
+					fg_dark = "{{base01_hash}}", -- Dark text/comments
+					fg_light = "{{base_middle_hash}}", -- Light text
 					
 					-- Accent colors
-					red = "#d8322f",
-					green = "#809900",
-					yellow = "#b38800",
-					blue = "#268bd2",
-					magenta = "#d03682",
-					cyan = "#2aa198",
-					orange = "#c84b16",
-					violet = "#6c71c4",
+					red = "{{accent01_hash}}",
+					green = "{{accent02_hash}}",
+					yellow = "{{accent03_hash}}",
+					blue = "{{accent04_hash}}",
+					magenta = "{{accent05_hash}}",
+					cyan = "{{accent06_hash}}",
+					orange = "{{accent08_hash}}",
+					violet = "{{accent07_hash}}",
 				}
 				
 				-- Clear existing highlights

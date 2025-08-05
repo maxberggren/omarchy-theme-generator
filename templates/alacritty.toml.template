@@ -1,0 +1,24 @@
+[colors]
+[colors.primary]
+background = "{{base_dark_0x}}" # Dark background
+foreground = "{{base_middle_0x}}" # Main text color
+
+[colors.normal]
+black = "{{base_dark_0x}}"   # Dark background
+red = "{{accent01_0x}}"     # Solarized Osaka red
+green = "{{accent02_0x}}"   # Solarized Osaka green
+yellow = "{{accent03_0x}}"  # Solarized Osaka yellow
+blue = "{{accent04_0x}}"    # Solarized Osaka blue
+magenta = "{{accent05_0x}}" # Solarized Osaka magenta
+cyan = "{{accent06_0x}}"    # Solarized Osaka cyan
+white = "{{base_light01_0x}}"   # Light background
+
+[colors.bright]
+black = "{{base01_0x}}"   # Dark text/inactive
+red = "{{accent01_0x}}"     # Solarized Osaka red (same as normal for consistency)
+green = "{{accent02_0x}}"   # Solarized Osaka green (same as normal for consistency)
+yellow = "{{accent03_0x}}"  # Solarized Osaka yellow (same as normal for consistency)
+blue = "{{accent04_0x}}"    # Solarized Osaka blue (same as normal for consistency)
+magenta = "{{accent05_0x}}" # Solarized Osaka magenta (same as normal for consistency)
+cyan = "{{accent06_0x}}"    # Solarized Osaka cyan (same as normal for consistency)
+white = "{{base_light02_0x}}"   # Lightest background
