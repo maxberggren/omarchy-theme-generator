@@ -21,10 +21,10 @@ omarchy-theme-install https://github.com/maxberggren/omarchy-night-owl-theme
 python build_theme.py
 
 # Extract colors from any image and build a custom theme
-./extract_colors_from_image.py wallpaper.jpg --build
+./extract_colors_from_image.py "templates/backgrounds/wallpapersden.com_mount-fuji-4k_3840x2160.jpg" -o fuji_theme_colors.json --build
 
 # Generate a preview of extracted colors
-./extract_colors_from_image.py photo.png --preview
+./extract_colors_from_image.py "templates/backgrounds/wallpapersden.com_mount-fuji-4k_3840x2160.jpg" --preview
 ```
 
 ## 🎨 Features
