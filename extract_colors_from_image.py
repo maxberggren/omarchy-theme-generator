@@ -7,15 +7,19 @@
 #     "matplotlib",
 #     "opencv-python",
 #     "numpy",
+#     "requests",
 # ]
 # ///
 """
 Image-to-Theme Color Extraction Script
-Extract colors from an image and generate a Night Owl theme configuration.
+Extract colors from an image (local file or URL) and generate a Night Owl theme configuration.
 
 This script uses K-means clustering to extract dominant colors from an image,
 then intelligently maps them to theme color categories based on brightness,
 saturation, and visual characteristics.
+
+Supports both local image files and URLs. Images from URLs are automatically
+downloaded to a temporary file and cleaned up after processing.
 """
 
 import argparse
@@ -23,6 +27,8 @@ import json
 import os
 import shutil
 import sys
+import tempfile
+import urllib.parse
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
 import colorsys
@@ -33,12 +39,112 @@ try:
     from sklearn.cluster import KMeans
     import matplotlib.pyplot as plt
     import cv2
+    import requests
 except ImportError as e:
     print(f"Missing required dependency: {e}")
     print("Dependencies should be automatically installed by uv.")
     print("If you're not using uv, install manually:")
-    print("pip install pillow scikit-learn matplotlib opencv-python numpy")
+    print("pip install pillow scikit-learn matplotlib opencv-python numpy requests")
     sys.exit(1)
+
+
+def is_url(string: str) -> bool:
+    """Check if a string is a valid URL."""
+    try:
+        result = urllib.parse.urlparse(string)
+        return all([result.scheme, result.netloc])
+    except Exception:
+        return False
+
+
+def download_image_from_url(url: str) -> str:
+    """
+    Download an image from a URL to a temporary file.
+    
+    Args:
+        url: The URL of the image to download
+        
+    Returns:
+        Path to the downloaded temporary file
+        
+    Raises:
+        Exception: If download fails or image is invalid
+    """
+    print(f"🌐 Downloading image from URL: {url}")
+    
+    try:
+        # Send GET request with headers to mimic a browser
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        
+        response = requests.get(url, headers=headers, timeout=30, stream=True)
+        response.raise_for_status()
+        
+        # Check if the response is an image
+        content_type = response.headers.get('content-type', '').lower()
+        if not content_type.startswith('image/'):
+            # Try to detect image by URL extension as fallback
+            parsed_url = urllib.parse.urlparse(url)
+            path = parsed_url.path.lower()
+            image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.tiff', '.svg')
+            if not path.endswith(image_extensions):
+                raise Exception(f"URL does not appear to be an image. Content-Type: {content_type}")
+        
+        # Create temporary file with proper extension
+        file_extension = '.jpg'  # Default
+        if 'png' in content_type:
+            file_extension = '.png'
+        elif 'gif' in content_type:
+            file_extension = '.gif'
+        elif 'webp' in content_type:
+            file_extension = '.webp'
+        elif 'bmp' in content_type:
+            file_extension = '.bmp'
+        
+        # Create temporary file
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=file_extension)
+        
+        # Download in chunks to handle large files
+        total_size = int(response.headers.get('content-length', 0))
+        if total_size > 50 * 1024 * 1024:  # 50MB limit
+            temp_file.close()
+            os.unlink(temp_file.name)
+            raise Exception("Image file too large (>50MB)")
+        
+        downloaded_size = 0
+        chunk_size = 8192
+        
+        for chunk in response.iter_content(chunk_size=chunk_size):
+            if chunk:
+                temp_file.write(chunk)
+                downloaded_size += len(chunk)
+                
+                # Progress indicator for large files
+                if total_size > 1024 * 1024:  # Show progress for files >1MB
+                    progress = (downloaded_size / total_size) * 100 if total_size > 0 else 0
+                    print(f"\r📥 Downloaded: {downloaded_size // 1024}KB ({progress:.1f}%)", end='', flush=True)
+        
+        temp_file.close()
+        
+        if total_size > 1024 * 1024:
+            print()  # New line after progress
+        
+        # Verify the downloaded file is a valid image
+        try:
+            with Image.open(temp_file.name) as img:
+                img.verify()
+        except Exception as e:
+            os.unlink(temp_file.name)
+            raise Exception(f"Downloaded file is not a valid image: {e}")
+        
+        print(f"✅ Image downloaded successfully: {temp_file.name}")
+        return temp_file.name
+        
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"Failed to download image: {e}")
+    except Exception as e:
+        raise Exception(f"Error downloading image: {e}")
 
 
 def hex_to_rgb(hex_color: str) -> Tuple[int, int, int]:
@@ -364,7 +470,7 @@ def copy_wallpaper_to_backgrounds(source_image_path: str, script_dir: Path) -> s
 def main():
     """Main function to run the image-to-theme extraction."""
     parser = argparse.ArgumentParser(description="Extract colors from image and generate theme")
-    parser.add_argument("image_path", help="Path to the input image")
+    parser.add_argument("image_path", help="Path to the input image or URL to download from")
     parser.add_argument("-o", "--output", help="Output colors.json file path", 
                        default="colors_from_image.json")
     parser.add_argument("-k", "--clusters", type=int, default=8, 
@@ -376,96 +482,127 @@ def main():
     
     args = parser.parse_args()
     
-    if not os.path.exists(args.image_path):
-        print(f"Error: Image file '{args.image_path}' not found.")
-        sys.exit(1)
+    # Handle URL or local file path
+    temp_file_path = None
+    original_image_path = args.image_path
     
-    print(f"🎨 Extracting colors from: {args.image_path}")
+    if is_url(args.image_path):
+        try:
+            temp_file_path = download_image_from_url(args.image_path)
+            actual_image_path = temp_file_path
+        except Exception as e:
+            print(f"❌ Error downloading image from URL: {e}")
+            sys.exit(1)
+    else:
+        actual_image_path = args.image_path
+        if not os.path.exists(actual_image_path):
+            print(f"❌ Error: Image file '{actual_image_path}' not found.")
+            sys.exit(1)
+    
+    print(f"🎨 Extracting colors from: {original_image_path}")
     print(f"📊 Using {args.clusters} color clusters")
     
-    # Get script directory for copying wallpaper
-    script_dir = Path(__file__).parent
-    
-    # Copy image to backgrounds folder as wallpaper
-    print("📁 Copying image to backgrounds folder...")
-    wallpaper_path = copy_wallpaper_to_backgrounds(args.image_path, script_dir)
-    if wallpaper_path:
-        print(f"🖼️  Wallpaper copied to: {wallpaper_path}")
-    
-    # Extract dominant colors
     try:
-        dominant_colors = extract_dominant_colors(args.image_path, k=args.clusters)
-        print(f"✅ Extracted {len(dominant_colors)} dominant colors")
-    except Exception as e:
-        print(f"❌ Error extracting colors: {e}")
-        sys.exit(1)
-    
-    # Generate color preview if requested
-    if args.preview:
-        preview_path = args.output.replace('.json', '_preview.png')
-        try:
-            create_color_preview(dominant_colors, preview_path, 
-                               f"Dominant Colors from {os.path.basename(args.image_path)}")
-            print(f"🖼️  Color preview saved to: {preview_path}")
-        except Exception as e:
-            print(f"⚠️  Warning: Could not create preview - {e}")
-    
-    # Map colors to theme
-    print("🎯 Mapping colors to theme categories...")
-    theme_colors = map_colors_to_theme(dominant_colors)
-    
-    # Create final colors.json structure
-    colors_json = {
-        "colors": theme_colors,
-        "_metadata": {
-            "source_image": os.path.abspath(args.image_path),
-            "wallpaper_path": wallpaper_path if wallpaper_path else "not copied",
-            "extraction_method": "k-means clustering",
-            "clusters": args.clusters,
-            "generated_by": "extract_colors_from_image.py"
-        }
-    }
-    
-    # Save colors.json
-    try:
-        with open(args.output, 'w') as f:
-            json.dump(colors_json, f, indent=2)
-        print(f"💾 Theme colors saved to: {args.output}")
-    except Exception as e:
-        print(f"❌ Error saving colors: {e}")
-        sys.exit(1)
-    
-    # Show color mapping summary
-    print("\n🎨 Generated Color Mapping:")
-    for color_name, color_data in theme_colors.items():
-        hex_color = color_data["hex"]
-        description = color_data["description"]
-        print(f"  {color_name:<15} {hex_color:<8} - {description}")
-    
-    # Automatically run build_theme.py if requested
-    if args.build:
+        # Get script directory for copying wallpaper
         script_dir = Path(__file__).parent
-        build_script = script_dir / "build_theme.py"
         
-        if build_script.exists():
-            print(f"\n🔨 Running build_theme.py with {args.output}...")
-            import subprocess
-            
-            try:
-                result = subprocess.run([sys.executable, str(build_script), args.output], 
-                                      cwd=str(script_dir), capture_output=True, text=True)
-                if result.returncode == 0:
-                    print("✅ Theme build completed successfully!")
-                    print(result.stdout)
-                else:
-                    print("❌ Theme build failed:")
-                    print(result.stderr)
-            except Exception as e:
-                print(f"❌ Error running build script: {e}")
-        else:
-            print(f"⚠️  Warning: build_theme.py not found at {build_script}")
+        # Copy image to backgrounds folder as wallpaper
+        print("📁 Copying image to backgrounds folder...")
+        wallpaper_path = copy_wallpaper_to_backgrounds(actual_image_path, script_dir)
+        if wallpaper_path:
+            print(f"🖼️  Wallpaper copied to: {wallpaper_path}")
+        
+        # Extract dominant colors
+        try:
+            dominant_colors = extract_dominant_colors(actual_image_path, k=args.clusters)
+            print(f"✅ Extracted {len(dominant_colors)} dominant colors")
+        except Exception as e:
+            print(f"❌ Error extracting colors: {e}")
+            raise
     
-    print("\n🎉 Image-to-theme extraction completed!")
+        # Generate color preview if requested
+        if args.preview:
+            preview_path = args.output.replace('.json', '_preview.png')
+            try:
+                create_color_preview(dominant_colors, preview_path, 
+                                   f"Dominant Colors from {os.path.basename(original_image_path)}")
+                print(f"🖼️  Color preview saved to: {preview_path}")
+            except Exception as e:
+                print(f"⚠️  Warning: Could not create preview - {e}")
+        
+        # Map colors to theme
+        print("🎯 Mapping colors to theme categories...")
+        theme_colors = map_colors_to_theme(dominant_colors)
+        
+        # Create final colors.json structure
+        colors_json = {
+            "colors": theme_colors,
+            "_metadata": {
+                "source_image": original_image_path,
+                "source_type": "url" if is_url(original_image_path) else "local_file",
+                "wallpaper_path": wallpaper_path if wallpaper_path else "not copied",
+                "extraction_method": "k-means clustering",
+                "clusters": args.clusters,
+                "generated_by": "extract_colors_from_image.py"
+            }
+        }
+        
+        # Save colors.json
+        try:
+            with open(args.output, 'w') as f:
+                json.dump(colors_json, f, indent=2)
+            print(f"💾 Theme colors saved to: {args.output}")
+        except Exception as e:
+            print(f"❌ Error saving colors: {e}")
+            raise
+    
+        # Show color mapping summary
+        print("\n🎨 Generated Color Mapping:")
+        for color_name, color_data in theme_colors.items():
+            hex_color = color_data["hex"]
+            description = color_data["description"]
+            print(f"  {color_name:<15} {hex_color:<8} - {description}")
+        
+        # Automatically run build_theme.py if requested
+        if args.build:
+            script_dir = Path(__file__).parent
+            build_script = script_dir / "build_theme.py"
+            
+            if build_script.exists():
+                print(f"\n🔨 Running build_theme.py with {args.output}...")
+                import subprocess
+                
+                try:
+                    result = subprocess.run([sys.executable, str(build_script), args.output], 
+                                          cwd=str(script_dir), capture_output=True, text=True)
+                    if result.returncode == 0:
+                        print("✅ Theme build completed successfully!")
+                        print(result.stdout)
+                    else:
+                        print("❌ Theme build failed:")
+                        print(result.stderr)
+                except Exception as e:
+                    print(f"❌ Error running build script: {e}")
+            else:
+                print(f"⚠️  Warning: build_theme.py not found at {build_script}")
+        
+        print("\n🎉 Image-to-theme extraction completed!")
+        
+    except Exception as e:
+        print(f"❌ Error during processing: {e}")
+        exit_code = 1
+    else:
+        exit_code = 0
+    finally:
+        # Clean up temporary file if it was downloaded from URL
+        if temp_file_path and os.path.exists(temp_file_path):
+            try:
+                os.unlink(temp_file_path)
+                print(f"🗑️  Cleaned up temporary file: {temp_file_path}")
+            except Exception as e:
+                print(f"⚠️  Warning: Could not clean up temporary file {temp_file_path}: {e}")
+    
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":

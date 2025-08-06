@@ -8,6 +8,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 from pathlib import Path
 
 
@@ -27,6 +28,10 @@ def format_color(color_name, color_data, format_type):
     
     elif format_type == "0x":
         return f"0x{hex_color[1:]}"
+    
+    elif format_type == "rgb_array":
+        r, g, b = hex_to_rgb(hex_color)
+        return f"[{r}, {g}, {b}]"
     
     elif format_type.startswith("rgba"):
         r, g, b = hex_to_rgb(hex_color)
@@ -64,7 +69,7 @@ def generate_color_vars(colors):
     # First, generate standard color variants
     for color_name, color_data in colors.items():
         # Generate different format variants
-        formats = ["hash", "0x", "rgba_1_0", "rgba_0_8", "rgba_ee", "rgba_88", "rgba"]
+        formats = ["hash", "0x", "rgb_array", "rgba_1_0", "rgba_0_8", "rgba_ee", "rgba_88", "rgba"]
         
         for fmt in formats:
             var_name = f"{color_name}_{fmt}"
@@ -93,7 +98,7 @@ def generate_color_vars(colors):
             base_color_data = colors[base_color_name].copy()
             base_color_data["opacity"] = alpha_value
             
-            formats = ["hash", "0x", "rgba_1_0", "rgba_0_8", "rgba_ee", "rgba_88", "rgba"]
+            formats = ["hash", "0x", "rgb_array", "rgba_1_0", "rgba_0_8", "rgba_ee", "rgba_88", "rgba"]
             for fmt in formats:
                 var_name = f"{alpha_name}_{fmt}"
                 color_vars[var_name] = format_color(alpha_name, base_color_data, fmt)
@@ -179,6 +184,7 @@ def main():
     template_mappings = {
         "alacritty.toml.template": "alacritty.toml",
         "btop.theme.template": "btop.theme",
+        "chromium-theme/manifest.json.template": "chromium-theme/manifest.json",
         "hyprland.conf.template": "hyprland.conf",
         "hyprlock.conf.template": "hyprlock.conf",
         "mako.ini.template": "mako.ini",
@@ -198,6 +204,18 @@ def main():
         
         if template_path.exists():
             process_template(template_path, output_path, color_vars)
+            
+            # Special handling for chromium-theme: copy additional files
+            if template_name.startswith("chromium-theme/"):
+                template_dir = templates_dir / "chromium-theme"
+                output_dir_chromium = output_path.parent
+                
+                # Copy any non-template files from the chromium-theme template directory
+                for file_path in template_dir.glob("*"):
+                    if file_path.is_file() and not file_path.name.endswith(".template"):
+                        dest_path = output_dir_chromium / file_path.name
+                        shutil.copy2(file_path, dest_path)
+                        print(f"Copied {file_path.name} to {dest_path}")
         else:
             print(f"Warning: Template {template_path} not found")
     

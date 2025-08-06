@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Generated Theme",
+  "version": "1.0",
+  "description": "A dark theme generated from extracted colors",
+  "theme": {
+    "colors": {
+      "frame": {{base_dark_rgb_array}},
+      "frame_inactive": {{base_dark_rgb_array}},
+      "frame_incognito": {{base_dark_rgb_array}},
+      "frame_incognito_inactive": {{base_dark_rgb_array}},
+      "toolbar": {{base_dark_rgb_array}},
+      "tab_text": {{base_light01_rgb_array}},
+      "tab_background_text": {{base_middle_rgb_array}},
+      "bookmark_text": {{base_light01_rgb_array}},
+      "ntp_background": {{base_dark_rgb_array}},
+      "ntp_text": {{base_light01_rgb_array}},
+      "ntp_link": {{accent04_rgb_array}},
+      "ntp_header": {{base_dark_rgb_array}},
+      "button_background": {{base01_rgb_array}},
+      "omnibox_background": {{base01_rgb_array}},
+      "omnibox_text": {{base_light01_rgb_array}}
+    },
+    "tints": {
+      "buttons": [0.2, 0.5, 0.8]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

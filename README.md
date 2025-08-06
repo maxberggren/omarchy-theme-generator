@@ -4,30 +4,51 @@ A theme generator system for [Omarchy](https://omarchy.org) featuring centralize
 
 ## 🚀 Quick Start
 
+### Requirements
+
+This project uses Python scripts with automatic dependency management via [uv](https://docs.astral.sh/uv/). You have two options:
+
+**Option 1: Using uv (Recommended)**
+```bash
+# Install uv if you haven't already
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Dependencies are automatically managed - just run the scripts!
+uv run extract_colors_from_image.py image.jpg --build
+```
+
+**Option 2: Manual dependency installation**
+```bash
+pip install pillow scikit-learn matplotlib opencv-python numpy requests
+python extract_colors_from_image.py image.jpg --build
+```
+
 ### Basic Usage
 
 ```bash
-# Extract colors from any image and build a custom theme
-./extract_colors_from_image.py "templates/backgrounds/wallpapersden.com_mount-fuji-4k_3840x2160.jpg" -o colors.json --build
+# Extract colors from any image (local file or URL) and build a custom theme
+uv run extract_colors_from_image.py "templates/backgrounds/wallpapersden.com_mount-fuji-4k_3840x2160.jpg" -o colors.json --build
+# OR from a URL
+uv run extract_colors_from_image.py "https://picsum.photos/1920/1080" -o colors.json --build
+
 mkdir -p ~/.config/omarchy/themes/generated-theme
 cp -r * ~/.config/omarchy/themes/generated-theme/
 
 # If you want to edit some of the extracted colors in colors.json you can then run
-./build_theme.py
-
-# Generate a preview of extracted colors
-./extract_colors_from_image.py "templates/backgrounds/wallpapersden.com_mount-fuji-4k_3840x2160.jpg" --preview
+python build_theme.py colors.json
 ```
 
 ## 🎨 Features
 
 ### 🖼️ **Image-to-Theme Color Extraction**
 - Extract dominant colors from any image using advanced K-means clustering
+- **Support for both local files and URLs** - download images directly from the web
 - Intelligently map colors to theme categories (dark, middle, light, accents)
 - Generate complete themes that match your favorite wallpapers
 - **Automatically copy source image as `wallpaper.png` to backgrounds folder**
 - Visual color preview generation
-- Support for various image formats (JPEG, PNG, etc.)
+- Support for various image formats (JPEG, PNG, WebP, etc.)
+- Automatic cleanup of temporary files for URL downloads
 
 ### 🔧 **Centralized Color Management**
 - All colors defined in a single `colors.json` file
@@ -51,25 +72,32 @@ cp -r * ~/.config/omarchy/themes/generated-theme/
 
 ### Image-to-Theme Extraction
 
-Transform any image into a complete theme:
+Transform any image (local file or URL) into a complete theme:
 
 ```bash
-# Basic extraction (copies image to backgrounds/wallpaper.png)
-./extract_colors_from_image.py image.jpg
+# Basic extraction from local file (copies image to backgrounds/wallpaper.png)
+uv run extract_colors_from_image.py image.jpg
+
+# Extract from URL
+uv run extract_colors_from_image.py "https://example.com/wallpaper.jpg"
 
 # Save to specific file with preview
-./extract_colors_from_image.py wallpaper.jpg -o my_theme.json --preview
+uv run extract_colors_from_image.py wallpaper.jpg -o my_theme.json --preview
 
 # Complete workflow: extract + build theme + copy wallpaper
-./extract_colors_from_image.py background.jpg --build
+uv run extract_colors_from_image.py background.jpg --build
 
 # Fine-tune with cluster count
-./extract_colors_from_image.py photo.png -k 12 --preview
+uv run extract_colors_from_image.py photo.png -k 12 --preview
+
+# Extract from URL with all options
+uv run extract_colors_from_image.py "https://picsum.photos/1920/1080" -o random_theme.json --preview --build
 ```
 
-**Note**: The script automatically copies your source image to `backgrounds/wallpaper.png` (converted to PNG format) so it's available as a wallpaper for your theme.
+**Note**: The script automatically copies your source image to `backgrounds/wallpaper.png` (converted to PNG format) so it's available as a wallpaper for your theme. For URLs, the image is downloaded, processed, and cleaned up automatically.
 
 #### Options
+- `image_path`: Path to local image file OR URL to download from
 - `-o, --output`: Specify output file name (default: `colors_from_image.json`)
 - `-k, --clusters`: Number of color clusters to extract (default: 8, recommended: 6-12)
 - `--preview`: Generate a visual preview of extracted colors
@@ -192,12 +220,15 @@ night-owl/
 
 ```bash
 # Test different cluster counts to find the best result
-./extract_colors_from_image.py sunset.jpg -k 6 --preview
-./extract_colors_from_image.py sunset.jpg -k 10 --preview
-./extract_colors_from_image.py sunset.jpg -k 14 --preview
+uv run extract_colors_from_image.py sunset.jpg -k 6 --preview
+uv run extract_colors_from_image.py sunset.jpg -k 10 --preview
+uv run extract_colors_from_image.py sunset.jpg -k 14 --preview
 
 # Build and apply the best result (also copies to backgrounds/wallpaper.png)
-./extract_colors_from_image.py sunset.jpg -k 10 --build
+uv run extract_colors_from_image.py sunset.jpg -k 10 --build
+
+# Or directly from a URL
+uv run extract_colors_from_image.py "https://example.com/sunset.jpg" -k 10 --build
 ```
 
 **Result**: Your `sunset.jpg` is now available as `backgrounds/wallpaper.png` and a complete theme has been generated to match it!
@@ -205,10 +236,10 @@ night-owl/
 ### Creating Multiple Theme Variants
 
 ```bash
-# Extract colors from different images
-./extract_colors_from_image.py ocean.jpg -o ocean_theme.json
-./extract_colors_from_image.py forest.jpg -o forest_theme.json
-./extract_colors_from_image.py sunset.jpg -o sunset_theme.json
+# Extract colors from different sources (local files and URLs)
+uv run extract_colors_from_image.py ocean.jpg -o ocean_theme.json
+uv run extract_colors_from_image.py forest.jpg -o forest_theme.json
+uv run extract_colors_from_image.py "https://example.com/sunset.jpg" -o sunset_theme.json
 
 # Build specific variants
 python build_theme.py ocean_theme.json -o ~/themes/ocean/
@@ -234,8 +265,12 @@ The image extraction script automatically manages its dependencies:
 - `matplotlib` - Color preview generation  
 - `opencv-python` - Image manipulation
 - `numpy` - Numerical operations
+- `requests` - URL image downloading
 
-Dependencies are automatically installed when running the script with `uv`.
+Dependencies are automatically installed when running the script with `uv`. If not using `uv`, install manually with:
+```bash
+pip install pillow scikit-learn matplotlib opencv-python numpy requests
+```
 
 ### Color Space Considerations
 - Extracts colors in RGB space for compatibility
@@ -272,9 +307,15 @@ python build_theme.py nonexistent.json
 # Shows: Available JSON files in directory
 
 # Get help for any script
-./extract_colors_from_image.py --help
+uv run extract_colors_from_image.py --help
 python build_theme.py --help
 ```
+
+**URL download issues**
+- Ensure you have internet connectivity
+- Some sites may block automated requests
+- Try using a different image URL
+- Check if the URL actually points to an image file
 
 ## 🎯 Advanced Usage
 
@@ -317,9 +358,11 @@ Available placeholder formats for any color named `colorname`:
 
 **Image Color Extraction**:
 - Full K-means clustering implementation for robust color extraction
+- **URL support** - download and process images directly from web URLs
 - Intelligent color mapping based on perceptual characteristics
 - Automatic theme building integration
 - Visual color preview generation
+- Automatic cleanup of temporary downloaded files
 
 **Improved Workflow**:
 - Seamless integration between extraction and building
