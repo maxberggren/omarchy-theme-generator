@@ -1,27 +1,19 @@
-# Omarchy Night Owl Theme
+# Omarchy Theme Generator
 
-A sophisticated theme system for [Omarchy](https://omarchy.org) featuring centralized color management and intelligent image-to-theme color extraction.
-
-![Theme Preview](images/preview.png)
+A theme generator system for [Omarchy](https://omarchy.org) featuring centralized color management and intelligent image-to-theme color extraction.
 
 ## 🚀 Quick Start
-
-### Installation
-
-Install this theme using the Omarchy TUI by selecting `Themes > Install` and copying the URL of this repo, or run:
-
-```bash
-omarchy-theme-install https://github.com/maxberggren/omarchy-night-owl-theme
-```
 
 ### Basic Usage
 
 ```bash
-# Use the default theme
-python build_theme.py
-
 # Extract colors from any image and build a custom theme
-./extract_colors_from_image.py "templates/backgrounds/wallpapersden.com_mount-fuji-4k_3840x2160.jpg" -o fuji_theme_colors.json --build
+./extract_colors_from_image.py "templates/backgrounds/wallpapersden.com_mount-fuji-4k_3840x2160.jpg" -o colors.json --build
+mkdir -p ~/.config/omarchy/themes/generated-theme
+cp -r * ~/.config/omarchy/themes/generated-theme/
+
+# If you want to edit some of the extracted colors in colors.json you can then run
+./build_theme.py
 
 # Generate a preview of extracted colors
 ./extract_colors_from_image.py "templates/backgrounds/wallpapersden.com_mount-fuji-4k_3840x2160.jpg" --preview
