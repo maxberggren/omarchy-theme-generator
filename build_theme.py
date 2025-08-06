@@ -403,12 +403,14 @@ def main():
     if not colors_file.is_absolute():
         colors_file = script_dir / colors_file
     
-    # Handle output directory
+    # Handle output directory - default to Omarchy themes directory
     if args.output_dir:
         output_dir = Path(args.output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
     else:
-        output_dir = script_dir
+        # Generate directly to Omarchy themes directory instead of polluting project root
+        output_dir = Path.home() / ".config" / "omarchy" / "themes" / "generated-theme"
+        output_dir.mkdir(parents=True, exist_ok=True)
     
     templates_dir = script_dir / "templates"
     
@@ -474,6 +476,7 @@ def main():
             print(f"Warning: Template {template_path} not found")
     
     print("\n✅ Theme build completed!")
+    print(f"📁 Generated directly to: {output_dir}")
     print("\nGenerated files:")
     for output_name in template_mappings.values():
         output_path = output_dir / output_name
@@ -482,83 +485,221 @@ def main():
         else:
             print(f"  ✗ {output_name} (failed)")
     
-    # Copy theme to Omarchy themes directory
-    omarchy_themes_dir = Path.home() / ".config" / "omarchy" / "themes" / "generated-theme"
-    try:
-        print(f"\n📁 Copying theme to Omarchy themes directory...")
-        
-        # Create the Omarchy themes directory if it doesn't exist
-        omarchy_themes_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Copy only the generated theme files to the Omarchy themes directory
-        copied_files = []
-        for output_name in template_mappings.values():
-            output_path = output_dir / output_name
-            if output_path.exists():
-                dest_path = omarchy_themes_dir / output_name
-                # Create subdirectories if needed (for chromium-theme)
-                dest_path.parent.mkdir(parents=True, exist_ok=True)
-                if output_path.is_file():
-                    shutil.copy2(output_path, dest_path)
-                elif output_path.is_dir():
-                    if dest_path.exists():
-                        shutil.rmtree(dest_path)
-                    shutil.copytree(output_path, dest_path)
-                copied_files.append(output_name)
-        
-        # Also copy the backgrounds directory if it exists
-        backgrounds_src = output_dir / "backgrounds"
-        if backgrounds_src.exists():
-            backgrounds_dest = omarchy_themes_dir / "backgrounds"
-            if backgrounds_dest.exists():
-                shutil.rmtree(backgrounds_dest)
-            shutil.copytree(backgrounds_src, backgrounds_dest)
-            copied_files.append("backgrounds/")
-        
-        print(f"✅ Theme copied to: {omarchy_themes_dir}")
-        print(f"📋 Copied {len(copied_files)} items:")
-        for item in copied_files:
-            print(f"  ✓ {item}")
-        
-        print(f"\n🎨 Your theme is now ready to be selected in the Omarchy theme selector!")
-        print(f"💡 If you're happy with the results, rename the 'generated-theme' folder")
-        print(f"   to preserve it from being overwritten by subsequent builds.")
-        
-        # Install browser extension if chromium-theme exists
-        chromium_theme_dir = omarchy_themes_dir / "chromium-theme"
-        if chromium_theme_dir.exists() and (chromium_theme_dir / "manifest.json").exists():
-            print(f"\n🌐 Installing browser theme extension...")
-            try:
-                installed_browsers, failed_browsers = install_browser_extension(chromium_theme_dir)
+    # Copy backgrounds directory from project root to theme output
+    project_backgrounds = script_dir / "backgrounds"
+    theme_backgrounds = output_dir / "backgrounds"
+    
+    if project_backgrounds.exists():
+        # Copy backgrounds from project to theme directory
+        if theme_backgrounds.exists():
+            shutil.rmtree(theme_backgrounds)
+        shutil.copytree(project_backgrounds, theme_backgrounds)
+        print(f"  ✓ backgrounds/ (copied from project)")
+    elif theme_backgrounds.exists():
+        print(f"  ✓ backgrounds/ (already exists in theme)")
+    
+    print(f"\n🎨 Your theme is now ready to be selected in the Omarchy theme selector!")
+    print(f"💡 If you're happy with the results, rename the 'generated-theme' folder")
+    print(f"   to preserve it from being overwritten by subsequent builds.")
+    
+    # Install browser extension if chromium-theme exists
+    chromium_theme_dir = output_dir / "chromium-theme"
+    if chromium_theme_dir.exists() and (chromium_theme_dir / "manifest.json").exists():
+        print(f"\n🌐 Installing browser theme extension...")
+        try:
+            installed_browsers, failed_browsers = install_browser_extension(chromium_theme_dir)
+            
+            if installed_browsers:
+                print(f"✅ Browser theme installed successfully:")
+                for browser in installed_browsers:
+                    print(f"  ✓ {browser}")
                 
-                if installed_browsers:
-                    print(f"✅ Browser theme installed successfully:")
-                    for browser in installed_browsers:
-                        print(f"  ✓ {browser}")
-                    
-                    print(f"\n🔄 Restart your browser(s) to activate the theme!")
-                    print(f"💡 You can also manually load it from chrome://extensions/ → 'Load unpacked'")
-                
-                if failed_browsers:
-                    print(f"\n⚠️  Some browsers couldn't be configured:")
-                    for failure in failed_browsers:
-                        print(f"  ✗ {failure}")
-                
-                if not installed_browsers and not failed_browsers:
-                    print(f"📖 No supported browsers found. Manual installation:")
-                    print(f"   1. Open Chrome/Chromium → chrome://extensions/")
-                    print(f"   2. Enable 'Developer mode' → Click 'Load unpacked'")
-                    print(f"   3. Select: {chromium_theme_dir}")
-                
-            except Exception as e:
-                print(f"⚠️  Browser theme installation failed: {e}")
-                print(f"   Manual installation: Load {chromium_theme_dir} in chrome://extensions/")
-        
-    except Exception as e:
-        print(f"⚠️  Warning: Could not copy theme to Omarchy directory: {e}")
-        print(f"   You can manually copy the generated files to ~/.config/omarchy/themes/")
+                print(f"\n🔄 Restart your browser(s) to activate the theme!")
+                print(f"💡 You can also manually load it from chrome://extensions/ → 'Load unpacked'")
+            
+            if failed_browsers:
+                print(f"\n⚠️  Some browsers couldn't be configured:")
+                for failure in failed_browsers:
+                    print(f"  ✗ {failure}")
+            
+            if not installed_browsers and not failed_browsers:
+                print(f"📖 No supported browsers found. Manual installation:")
+                print(f"   1. Open Chrome/Chromium → chrome://extensions/")
+                print(f"   2. Enable 'Developer mode' → Click 'Load unpacked'")
+                print(f"   3. Select: {chromium_theme_dir}")
+            
+        except Exception as e:
+            print(f"⚠️  Browser theme installation failed: {e}")
+            print(f"   Manual installation: Load {chromium_theme_dir} in chrome://extensions/")
+    
+    # Reload Hyprland and other applications if running
+    try_reload_hyprland(output_dir)
+    try_reload_other_apps(output_dir)
     
     return 0
+
+
+def try_reload_hyprland(theme_dir):
+    """Try to reload Hyprland configuration to apply the new theme."""
+    try:
+        # Check if Hyprland is running
+        result = subprocess.run(['pgrep', 'Hyprland'], capture_output=True)
+        if result.returncode != 0:
+            return  # Hyprland not running
+        
+        print(f"\n🔄 Reloading Hyprland configuration...")
+        
+        # Method 1: Try hyprctl reload
+        try:
+            result = subprocess.run(['hyprctl', 'reload'], capture_output=True, text=True, timeout=10)
+            if result.returncode == 0:
+                print(f"✅ Hyprland configuration reloaded successfully!")
+                
+                # Also try to refresh wallpaper if hyprpaper is running
+                try_reload_wallpaper(theme_dir)
+                return
+            else:
+                print(f"⚠️  hyprctl reload failed: {result.stderr}")
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError) as e:
+            print(f"⚠️  hyprctl not available: {e}")
+        
+        # Method 2: Try sending SIGUSR1 signal to Hyprland (alternative reload method)
+        try:
+            result = subprocess.run(['pkill', '-SIGUSR1', 'Hyprland'], capture_output=True, timeout=5)
+            if result.returncode == 0:
+                print(f"✅ Hyprland reload signal sent!")
+                try_reload_wallpaper(theme_dir)
+                return
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError) as e:
+            print(f"⚠️  Signal reload failed: {e}")
+        
+        # If all methods fail, provide manual instructions
+        print(f"💡 Manual reload: Run 'hyprctl reload' or restart Hyprland")
+        
+    except Exception as e:
+        print(f"⚠️  Hyprland reload check failed: {e}")
+
+
+def try_reload_wallpaper(theme_dir):
+    """Try to reload wallpaper using various wallpaper managers."""
+    wallpaper_path = theme_dir / "backgrounds" / "wallpaper.png"
+    
+    if not wallpaper_path.exists():
+        return
+    
+    print(f"🖼️  Attempting to reload wallpaper: {wallpaper_path}")
+    
+    # Get all connected monitors for hyprpaper
+    monitors = []
+    try:
+        result = subprocess.run(['hyprctl', 'monitors', '-j'], capture_output=True, text=True)
+        if result.returncode == 0:
+            import json
+            monitor_data = json.loads(result.stdout)
+            monitors = [monitor['name'] for monitor in monitor_data]
+    except Exception:
+        monitors = ['eDP-1', 'HDMI-A-1', 'DP-1', 'DP-2']  # Common monitor names
+    
+    wallpaper_managers = [
+        # hyprpaper - set for all monitors
+        (['pgrep', 'hyprpaper'], [
+            ['hyprctl', 'hyprpaper', 'preload', str(wallpaper_path)]
+        ] + [['hyprctl', 'hyprpaper', 'wallpaper', f'{monitor},{wallpaper_path}'] for monitor in monitors]),
+        
+        # swww 
+        (['pgrep', 'swww-daemon'], [['swww', 'img', str(wallpaper_path)]]),
+        
+        # wpaperd - restart to reload config
+        (['pgrep', 'wpaperd'], [['pkill', 'wpaperd'], ['wpaperd', '-d']]),
+        
+        # swaybg - restart with new wallpaper
+        (['pgrep', 'swaybg'], [
+            ['pkill', 'swaybg'],
+            ['swaybg', '-i', str(wallpaper_path), '-m', 'fill']
+        ]),
+        
+        # feh - direct wallpaper setting
+        (['which', 'feh'], [['feh', '--bg-fill', str(wallpaper_path)]]),
+        
+        # nitrogen - set wallpaper
+        (['which', 'nitrogen'], [['nitrogen', '--set-zoom-fill', str(wallpaper_path)]]),
+    ]
+    
+    for check_cmd, reload_cmds in wallpaper_managers:
+        try:
+            # Check if the wallpaper manager is available/running
+            result = subprocess.run(check_cmd, capture_output=True)
+            if result.returncode == 0:
+                manager_name = check_cmd[1]
+                success = True
+                
+                try:
+                    # Execute all reload commands for this manager
+                    for reload_cmd in reload_cmds:
+                        result = subprocess.run(reload_cmd, capture_output=True, text=True, timeout=10)
+                        if result.returncode != 0:
+                            print(f"  ⚠️  {manager_name}: Command failed - {' '.join(reload_cmd)}")
+                            success = False
+                            break
+                    
+                    if success:
+                        print(f"  ✅ {manager_name}: Wallpaper set successfully")
+                        return
+                        
+                except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError) as e:
+                    print(f"  ⚠️  {manager_name}: Command failed - {e}")
+        except Exception:
+            continue
+    
+    print(f"  💡 Manual wallpaper reload may be needed")
+    print(f"  💡 Try: hyprctl hyprpaper wallpaper \",{wallpaper_path}\"")
+    print(f"  💡 Or: swww img {wallpaper_path}")
+
+
+def try_reload_other_apps(theme_dir):
+    """Try to reload other applications that use the theme."""
+    apps_to_reload = [
+        # Waybar
+        (['pgrep', 'waybar'], ['pkill', '-SIGUSR2', 'waybar'], 'Waybar'),
+        # Mako (notification daemon)
+        (['pgrep', 'mako'], ['makoctl', 'reload'], 'Mako'),
+        # Wofi (already reads config on each launch, but we can notify)
+        # Walker (already reads config on each launch)
+        # SwayOSD (may need restart)
+        (['pgrep', 'swayosd'], ['pkill', '-SIGUSR1', 'swayosd'], 'SwayOSD'),
+    ]
+    
+    reloaded_apps = []
+    
+    for check_cmd, reload_cmd, app_name in apps_to_reload:
+        try:
+            # Check if the app is running
+            result = subprocess.run(check_cmd, capture_output=True)
+            if result.returncode == 0:
+                try:
+                    # Try to reload the app
+                    result = subprocess.run(reload_cmd, capture_output=True, text=True, timeout=5)
+                    if result.returncode == 0:
+                        reloaded_apps.append(app_name)
+                    else:
+                        print(f"  ⚠️  {app_name}: Reload failed")
+                except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+                    print(f"  ⚠️  {app_name}: Reload command not available")
+        except Exception:
+            continue
+    
+    if reloaded_apps:
+        print(f"\n🔄 Application reloads:")
+        for app in reloaded_apps:
+            print(f"  ✅ {app}")
+    
+    # Special handling for btop (uses themes via config file)
+    try:
+        result = subprocess.run(['pgrep', 'btop'], capture_output=True)
+        if result.returncode == 0:
+            print(f"  💡 btop: Restart btop to see new theme colors")
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":
