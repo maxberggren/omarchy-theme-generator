@@ -33,6 +33,7 @@ uv run extract_colors_from_image.py "https://picsum.photos/1920/1080" -o colors.
 
 # The theme is automatically deployed to ~/.config/omarchy/themes/generated-theme/
 # and is ready to be selected in the Omarchy theme selector!
+# Browser themes are also automatically installed into Chrome, Chromium, Edge, Brave, and Vivaldi!
 
 # If you want to edit some of the extracted colors in colors.json you can then run
 python build_theme.py colors.json
@@ -398,6 +399,7 @@ Available placeholder formats for any color named `colorname`:
 **Enhanced Build System**:
 - Added command-line argument support to `build_theme.py`
 - **Automatic deployment** to `~/.config/omarchy/themes/generated-theme/`
+- **Automatic browser theme installation** into Chrome, Chromium, Edge, Brave, and Vivaldi
 - Themes are instantly ready for selection in Omarchy theme selector
 - Can now specify which JSON color file to build from
 - Enhanced error handling with helpful suggestions
@@ -414,7 +416,8 @@ Available placeholder formats for any color named `colorname`:
 **Improved Workflow**:
 - Seamless integration between extraction and building
 - **Automatic theme deployment** to Omarchy themes directory
-- **Instant theme availability** in Omarchy theme selector
+- **Automatic browser extension installation** across multiple browsers
+- **Instant theme availability** in Omarchy theme selector and browsers
 - Backward compatibility maintained
 - Multiple theme variant support
 - Enhanced error messages and debugging
