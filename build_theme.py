@@ -4,6 +4,7 @@ Theme Builder Script for Night Owl
 Generates configuration files from templates using centralized color definitions.
 """
 
+import argparse
 import json
 import os
 import re
@@ -129,16 +130,46 @@ def process_template(template_path, output_path, color_vars):
 
 def main():
     """Main build function."""
+    parser = argparse.ArgumentParser(description="Build Night Owl theme from color definitions")
+    parser.add_argument("colors_file", nargs="?", default="colors.json",
+                       help="Path to colors JSON file (default: colors.json)")
+    parser.add_argument("-o", "--output-dir", help="Output directory for generated files")
+    
+    args = parser.parse_args()
+    
     script_dir = Path(__file__).parent
-    colors_file = script_dir / "colors.json"
+    
+    # Handle colors file path
+    colors_file = Path(args.colors_file)
+    if not colors_file.is_absolute():
+        colors_file = script_dir / colors_file
+    
+    # Handle output directory
+    if args.output_dir:
+        output_dir = Path(args.output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+    else:
+        output_dir = script_dir
+    
     templates_dir = script_dir / "templates"
     
     print("🎨 Building Night Owl theme configurations...")
     print(f"Loading colors from: {colors_file}")
     
+    if not colors_file.exists():
+        print(f"❌ Error: Colors file '{colors_file}' not found.")
+        print(f"Available JSON files in {script_dir}:")
+        for json_file in script_dir.glob("*.json"):
+            print(f"  • {json_file.name}")
+        return 1
+    
     # Load colors
-    colors = load_colors(colors_file)
-    print(f"Loaded {len(colors)} color definitions")
+    try:
+        colors = load_colors(colors_file)
+        print(f"Loaded {len(colors)} color definitions")
+    except Exception as e:
+        print(f"❌ Error loading colors: {e}")
+        return 1
     
     # Generate color variables
     color_vars = generate_color_vars(colors)
@@ -163,7 +194,7 @@ def main():
     # Process each template
     for template_name, output_name in template_mappings.items():
         template_path = templates_dir / template_name
-        output_path = script_dir / output_name
+        output_path = output_dir / output_name
         
         if template_path.exists():
             process_template(template_path, output_path, color_vars)
@@ -173,12 +204,15 @@ def main():
     print("\n✅ Theme build completed!")
     print("\nGenerated files:")
     for output_name in template_mappings.values():
-        output_path = script_dir / output_name
+        output_path = output_dir / output_name
         if output_path.exists():
             print(f"  ✓ {output_name}")
         else:
             print(f"  ✗ {output_name} (failed)")
+    
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    sys.exit(main())
