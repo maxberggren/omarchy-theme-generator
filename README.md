@@ -31,8 +31,8 @@ uv run extract_colors_from_image.py "templates/backgrounds/wallpapersden.com_mou
 # OR from a URL
 uv run extract_colors_from_image.py "https://picsum.photos/1920/1080" -o colors.json --build
 
-mkdir -p ~/.config/omarchy/themes/generated-theme
-cp -r * ~/.config/omarchy/themes/generated-theme/
+# The theme is automatically deployed to ~/.config/omarchy/themes/generated-theme/
+# and is ready to be selected in the Omarchy theme selector!
 
 # If you want to edit some of the extracted colors in colors.json you can then run
 python build_theme.py colors.json
@@ -238,7 +238,7 @@ uv run extract_colors_from_image.py sunset.jpg -k 10 --build
 uv run extract_colors_from_image.py "https://example.com/sunset.jpg" -k 10 --build
 ```
 
-**Result**: Your `sunset.jpg` is now available as `backgrounds/wallpaper.png` and a complete theme has been generated to match it!
+**Result**: Your `sunset.jpg` is now available as `backgrounds/wallpaper.png`, a complete theme has been generated to match it, and it's automatically deployed to `~/.config/omarchy/themes/generated-theme/` ready for selection in Omarchy!
 
 ### Creating Multiple Theme Variants
 
@@ -248,10 +248,16 @@ uv run extract_colors_from_image.py ocean.jpg -o ocean_theme.json
 uv run extract_colors_from_image.py forest.jpg -o forest_theme.json
 uv run extract_colors_from_image.py "https://example.com/sunset.jpg" -o sunset_theme.json
 
-# Build specific variants
-python build_theme.py ocean_theme.json -o ~/themes/ocean/
-python build_theme.py forest_theme.json -o ~/themes/forest/
-python build_theme.py sunset_theme.json -o ~/themes/sunset/
+# Build specific variants (automatically deployed to ~/.config/omarchy/themes/generated-theme/)
+python build_theme.py ocean_theme.json
+python build_theme.py forest_theme.json  
+python build_theme.py sunset_theme.json
+
+# Rename the generated-theme folder to preserve themes you like
+mv ~/.config/omarchy/themes/generated-theme ~/.config/omarchy/themes/ocean-theme
+# Build the next theme...
+python build_theme.py forest_theme.json
+mv ~/.config/omarchy/themes/generated-theme ~/.config/omarchy/themes/forest-theme
 ```
 
 ### Manual Color Customization
@@ -259,7 +265,8 @@ python build_theme.py sunset_theme.json -o ~/themes/sunset/
 1. **Edit colors**: Modify `colors.json` to change or add colors
 2. **Edit templates**: Modify template files if needed for layout changes
 3. **Build**: Run `python build_theme.py` to generate configs
-4. **Deploy**: Generated files are ready to use
+4. **Deploy**: Theme is automatically deployed to `~/.config/omarchy/themes/generated-theme/`
+5. **Preserve**: Rename the `generated-theme` folder if you want to keep it from being overwritten
 
 ### Installing the Chromium/Chrome Theme
 
@@ -269,7 +276,7 @@ The generated `chromium-theme/` directory contains a complete browser theme that
 1. Open Chrome/Chromium browser
 2. Navigate to `chrome://extensions/`
 3. Enable "Developer mode" (toggle in top right)
-4. Click "Load unpacked" and select the generated `chromium-theme/` directory
+4. Click "Load unpacked" and select `~/.config/omarchy/themes/generated-theme/chromium-theme/`
 5. The theme will be applied automatically
 
 **What's Included:**
@@ -377,6 +384,8 @@ Available placeholder formats for any color named `colorname`:
 
 **Enhanced Build System**:
 - Added command-line argument support to `build_theme.py`
+- **Automatic deployment** to `~/.config/omarchy/themes/generated-theme/`
+- Themes are instantly ready for selection in Omarchy theme selector
 - Can now specify which JSON color file to build from
 - Enhanced error handling with helpful suggestions
 - Output directory customization option
@@ -391,6 +400,8 @@ Available placeholder formats for any color named `colorname`:
 
 **Improved Workflow**:
 - Seamless integration between extraction and building
+- **Automatic theme deployment** to Omarchy themes directory
+- **Instant theme availability** in Omarchy theme selector
 - Backward compatibility maintained
 - Multiple theme variant support
 - Enhanced error messages and debugging
