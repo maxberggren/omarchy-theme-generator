@@ -268,16 +268,29 @@ mv ~/.config/omarchy/themes/generated-theme ~/.config/omarchy/themes/forest-them
 4. **Deploy**: Theme is automatically deployed to `~/.config/omarchy/themes/generated-theme/`
 5. **Preserve**: Rename the `generated-theme` folder if you want to keep it from being overwritten
 
-### Installing the Chromium/Chrome Theme
+### Browser Theme Installation
 
-The generated `chromium-theme/` directory contains a complete browser theme that matches your extracted colors:
+The build system automatically installs the browser theme into all supported browsers found on your system:
 
-**Installation Steps:**
-1. Open Chrome/Chromium browser
-2. Navigate to `chrome://extensions/`
-3. Enable "Developer mode" (toggle in top right)
-4. Click "Load unpacked" and select `~/.config/omarchy/themes/generated-theme/chromium-theme/`
-5. The theme will be applied automatically
+**Automatic Installation:**
+- The theme is automatically installed into Chrome, Chromium, Edge, Brave, and Vivaldi
+- Extensions are configured in each browser's "External Extensions" directory
+- Simply restart your browser(s) to activate the theme
+- No manual configuration required!
+
+**Supported Browsers:**
+- Google Chrome
+- Chromium
+- Microsoft Edge
+- Brave Browser
+- Vivaldi
+
+**Manual Installation (if needed):**
+If automatic installation fails or you prefer manual control:
+1. Open your browser → Navigate to `chrome://extensions/`
+2. Enable "Developer mode" (toggle in top right)
+3. Click "Load unpacked" → Select `~/.config/omarchy/themes/generated-theme/chromium-theme/`
+4. The theme will be applied automatically
 
 **What's Included:**
 - Dark theme design matching your color palette
