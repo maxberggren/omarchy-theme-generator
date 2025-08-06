@@ -186,6 +186,7 @@ The system automatically converts colors to application-specific formats:
 
 - **Alacritty**: `0xRRGGBB` format
 - **btop**: `#RRGGBB` format  
+- **Chromium/Chrome**: `[R,G,B]` array format for browser themes
 - **Hyprland**: `rgba(#RRGGBBaa)` format with hex alpha
 - **Hyprlock**: `rgba(R,G,B,opacity)` format with decimal values
 - **Mako**: `#RRGGBB` format
@@ -202,6 +203,9 @@ night-owl/
 ├── templates/                          # Template directory
 │   ├── alacritty.toml.template
 │   ├── btop.theme.template
+│   ├── chromium-theme/                 # Browser theme templates
+│   │   ├── manifest.json.template
+│   │   └── Cached Theme.pak
 │   ├── hyprland.conf.template
 │   ├── hyprlock.conf.template
 │   ├── mako.ini.template
@@ -211,7 +215,10 @@ night-owl/
 │   ├── waybar.css.template
 │   └── wofi.css.template
 ├── backgrounds/                        # Sample background images
-└── [generated config files]
+├── chromium-theme/                     # Generated browser theme
+│   ├── manifest.json
+│   └── Cached Theme.pak
+└── [other generated config files]
 ```
 
 ## 🔄 Workflow Examples
@@ -253,6 +260,23 @@ python build_theme.py sunset_theme.json -o ~/themes/sunset/
 2. **Edit templates**: Modify template files if needed for layout changes
 3. **Build**: Run `python build_theme.py` to generate configs
 4. **Deploy**: Generated files are ready to use
+
+### Installing the Chromium/Chrome Theme
+
+The generated `chromium-theme/` directory contains a complete browser theme that matches your extracted colors:
+
+**Installation Steps:**
+1. Open Chrome/Chromium browser
+2. Navigate to `chrome://extensions/`
+3. Enable "Developer mode" (toggle in top right)
+4. Click "Load unpacked" and select the generated `chromium-theme/` directory
+5. The theme will be applied automatically
+
+**What's Included:**
+- Dark theme design matching your color palette
+- Custom colors for frames, toolbars, tabs, and UI elements
+- New tab page styling with your accent colors
+- Bookmark and omnibox theming
 
 ## 🔧 Technical Details
 
@@ -324,6 +348,7 @@ python build_theme.py --help
 Available placeholder formats for any color named `colorname`:
 - `{{colorname_hash}}` - `#RRGGBB`
 - `{{colorname_0x}}` - `0xRRGGBB` 
+- `{{colorname_rgb_array}}` - `[R, G, B]` (Chromium theme format)
 - `{{colorname_rgba_1_0}}` - `rgba(R,G,B,1.0)`
 - `{{colorname_rgba_0_8}}` - `rgba(R,G,B,0.8)`
 - `{{colorname_rgba_ee}}` - `rgba(#RRGGBBee)` (Hyprland format)
