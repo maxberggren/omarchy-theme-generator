@@ -479,6 +479,8 @@ def main():
                        action="store_true")
     parser.add_argument("--build", help="Automatically run build_theme.py after extraction", 
                        action="store_true")
+    parser.add_argument("--output-dir", help="Output directory for the generated theme when using --build",
+                       default=None)
     
     args = parser.parse_args()
     
@@ -569,11 +571,15 @@ def main():
             build_script = script_dir / "build_theme.py"
             
             if build_script.exists():
-                print(f"\n🔨 Running build_theme.py with {args.output}...")
+                colors_path_abs = str(Path(args.output).expanduser().resolve())
+                build_cmd = [sys.executable, str(build_script), colors_path_abs]
+                if args.output_dir:
+                    build_cmd += ["-o", str(Path(args.output_dir).expanduser().resolve())]
+                print(f"\n🔨 Running build_theme.py with {colors_path_abs}...")
                 import subprocess
                 
                 try:
-                    result = subprocess.run([sys.executable, str(build_script), args.output], 
+                    result = subprocess.run(build_cmd, 
                                           cwd=str(script_dir), capture_output=True, text=True)
                     if result.returncode == 0:
                         print("✅ Theme build completed successfully!")
