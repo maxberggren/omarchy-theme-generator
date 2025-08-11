@@ -418,7 +418,21 @@ def write_readme(output_dir: Path, colors_file: Path):
     lines.append("    - `hyprctl hyprpaper preload <path>` then `hyprctl hyprpaper wallpaper <monitor>,<path>`")
     lines.append("    - `swww img <path>`")
     lines.append("")
-    lines.append("Generated configs cover Hyprland, Waybar, Mako, Wofi, Walker, SwayOSD, Alacritty, Neovim, and btop.")
+    lines.append("Generated configs cover Hyprland, Waybar, Mako, Wofi, Walker, SwayOSD, Alacritty, Neovim, btop, and GTK-4.0.")
+    lines.append("")
+    lines.append("## GTK-4.0 theme")
+    lines.append("A GTK-4.0 theme has been generated as `gtk-4.0.css`. To install:")
+    lines.append("```")
+    lines.append("./install_gtk_theme.sh")
+    lines.append("```")
+    lines.append("This will copy the theme to `~/.config/gtk-4.0/gtk.css` and restart Nautilus.")
+    lines.append("")
+    lines.append("Manual installation:")
+    lines.append("```")
+    lines.append("mkdir -p ~/.config/gtk-4.0")
+    lines.append("cp gtk-4.0.css ~/.config/gtk-4.0/gtk.css")
+    lines.append("pkill nautilus; sleep 1; nautilus &")
+    lines.append("```")
     lines.append("")
     lines.append("## Chromium/Chrome/Brave/Vivaldi theme (manual install)")
     if chromium_dir.exists() and (chromium_dir / "manifest.json").exists():
@@ -501,8 +515,10 @@ def main():
         "alacritty.toml.template": "alacritty.toml",
         "btop.theme.template": "btop.theme",
         "chromium-theme/manifest.json.template": "chromium-theme/manifest.json",
+        "gtk-4.0.css.template": "gtk-4.0.css",
         "hyprland.conf.template": "hyprland.conf",
         "hyprlock.conf.template": "hyprlock.conf",
+        "install_gtk_theme.sh.template": "install_gtk_theme.sh",
         "mako.ini.template": "mako.ini",
         "neovim.lua.template": "neovim.lua",
         "swayosd.css.template": "swayosd.css",
@@ -520,6 +536,11 @@ def main():
         
         if template_path.exists():
             process_template(template_path, output_path, color_vars)
+            
+            # Special handling for bash scripts: make them executable
+            if template_name.endswith(".sh.template"):
+                os.chmod(output_path, 0o755)
+                print(f"Made {output_path} executable")
             
             # Special handling for chromium-theme: copy additional files
             if template_name.startswith("chromium-theme/"):
