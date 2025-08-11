@@ -238,11 +238,19 @@ def find_color_category(colors: List[Tuple[int, int, int]], category: str) -> Tu
         RGB tuple for the best matching color
     """
     if category == 'dark':
-        # Find darkest color that's not pure black
-        candidates = [c for c in colors if calculate_brightness(c) < 0.3 and calculate_brightness(c) > 0.05]
+        # Find darkest color that's not pure black - be more aggressive about picking dark colors
+        candidates = [c for c in colors if calculate_brightness(c) < 0.2 and calculate_brightness(c) > 0.02]
         if not candidates:
-            candidates = [c for c in colors if calculate_brightness(c) < 0.4]
-        return min(candidates, key=calculate_brightness) if candidates else colors[-1]
+            # Fallback to slightly less dark colors
+            candidates = [c for c in colors if calculate_brightness(c) < 0.3 and calculate_brightness(c) > 0.02]
+        if not candidates:
+            # If still no candidates, take the darkest available color and make it darker
+            darkest = min(colors, key=calculate_brightness)
+            # Ensure the darkest color is quite dark by reducing its brightness
+            h, s, v = rgb_to_hsv(darkest)
+            target_brightness = min(v, 0.15)  # Cap brightness at 0.15 (quite dark)
+            return hsv_to_rgb((h, s, target_brightness))
+        return min(candidates, key=calculate_brightness)
     
     elif category == 'middle':
         # Find medium brightness color, prefer slightly saturated

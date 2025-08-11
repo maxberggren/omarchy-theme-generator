@@ -1,0 +1,73 @@
+{
+  "colors": {
+    "base_dark": {
+      "hex": "#03192c",
+      "description": "Main dark background - base03 in Solarized Osaka"
+    },
+    "base_dark01": {
+      "hex": "#5f6f74", 
+      "description": "Dark text/inactive - base01 in Solarized Osaka"
+    },
+    "base01": {
+      "hex": "#5f6f74", 
+      "description": "Dark text/inactive - base01 in Solarized Osaka (template alias)"
+    },
+    "base_middle": {
+      "hex": "#7a8c91",
+      "description": "Main text color - base00 in Solarized Osaka"
+    },
+    "base_light01": {
+      "hex": "#e9e2d0",
+      "description": "Light background - base2 in Solarized Osaka"
+    },
+    "base_light": {
+      "hex": "#fcf6e3",
+      "description": "Lightest background - base3 in Solarized Osaka"
+    },
+    "base_light02": {
+      "hex": "#fcf6e3",
+      "description": "Lightest background - base3 in Solarized Osaka (template alias)"
+    },
+    "accent01": {
+      "hex": "#d8322f",
+      "description": "Red accent color - Solarized Osaka red"
+    },
+    "accent02": {
+      "hex": "#809900",
+      "description": "Green accent color - Solarized Osaka green"
+    },
+    "accent03": {
+      "hex": "#b38800",
+      "description": "Yellow accent color - Solarized Osaka yellow"
+    },
+    "accent04": {
+      "hex": "#268bd2",
+      "description": "Blue accent color - Solarized Osaka blue"
+    },
+    "accent05": {
+      "hex": "#d03682",
+      "description": "Magenta accent color - Solarized Osaka magenta"
+    },
+    "accent06": {
+      "hex": "#2aa198",
+      "description": "Cyan accent color - Solarized Osaka cyan"
+    },
+    "accent07": {
+      "hex": "#6c71c4",
+      "description": "Violet accent color - Solarized Osaka violet"
+    },
+    "accent08": {
+      "hex": "#c84b16",
+      "description": "Orange accent color - Solarized Osaka orange"
+    },
+    "border": {
+      "hex": "#cccccc",
+      "description": "Generic border color used in various components"
+    },
+    "waybar": {
+      "hex": "#03192c",
+      "opacity": 0.8,
+      "description": "Waybar background with transparency"
+    }
+  }
+}

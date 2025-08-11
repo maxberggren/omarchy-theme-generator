@@ -9,15 +9,36 @@ echo "Installing GTK-4.0 theme..."
 mkdir -p ~/.config/gtk-4.0
 
 # Copy the theme file
-cp gtk-4.0.css ~/.config/gtk-4.0/gtk.css
+if [ -f "gtk-4.0.css" ]; then
+    cp gtk-4.0.css ~/.config/gtk-4.0/gtk.css
+    if [ $? -eq 0 ]; then
+        echo "✓ Successfully copied gtk-4.0.css"
+    else
+        echo "✗ Error copying gtk-4.0.css"
+        exit 1
+    fi
+else
+    echo "✗ Error: gtk-4.0.css not found in current directory!"
+    echo "Make sure you're running this script from the theme directory."
+    echo "Expected file: $(pwd)/gtk-4.0.css"
+    exit 1
+fi
 
 echo "GTK theme installed to ~/.config/gtk-4.0/gtk.css"
 
 # Restart Nautilus to apply the theme
 echo "Restarting Nautilus to apply theme..."
-pkill nautilus
-sleep 1
-nautilus &
+if pgrep nautilus > /dev/null; then
+    echo "✓ Found running Nautilus, restarting..."
+    pkill nautilus
+    sleep 2
+else
+    echo "ℹ Nautilus not currently running"
+fi
+
+# Start Nautilus in background
+nautilus > /dev/null 2>&1 &
+echo "✓ Nautilus started"
 
 echo "GTK theme installation complete!"
 echo "The theme should now be applied to Nautilus and other GTK-4.0 applications."

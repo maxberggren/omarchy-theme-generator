@@ -101,5 +101,312 @@ popover {
     background-color: {{base_dark_hash}};
 }
 
+/* File Dialog and Chooser Styling */
+filechooser {
+    background-color: {{base_dark_hash}};
+}
+
+filechooser .dialog-action-area {
+    background-color: {{base_dark_hash}};
+}
+
+filechooser .sidebar {
+    background-color: {{base_dark_hash}};
+}
+
+filechooser .sidebar row {
+    background-color: {{base_dark_hash}};
+}
+
+filechooser .sidebar row:selected {
+    background-color: {{base_middle_hash}};
+}
+
+filechooser placessidebar {
+    background-color: {{base_dark_hash}};
+}
+
+filechooser placessidebar row {
+    background-color: {{base_dark_hash}};
+}
+
+filechooser placessidebar row:selected {
+    background-color: {{base_middle_hash}};
+}
+
+filechooser .path-bar {
+    background-color: {{base_dark_hash}};
+}
+
+filechooser .path-bar button {
+    background-color: {{base_dark_hash}};
+}
+
+filechooser .view {
+    background-color: {{base_dark_hash}};
+}
+
+filechooser scrolledwindow {
+    background-color: {{base_dark_hash}};
+}
+
+/* File chooser dialog specific styling */
+.file-chooser-dialog {
+    background-color: {{base_dark_hash}};
+}
+
+.file-chooser-dialog .dialog-vbox {
+    background-color: {{base_dark_hash}};
+}
+
+.file-chooser-dialog .dialog-action-area {
+    background-color: {{base_dark_hash}};
+}
+
+/* Save/Open Dialog specific elements */
+.save-dialog,
+.open-dialog {
+    background-color: {{base_dark_hash}};
+}
+
+/* Generic dialog improvements */
+.dialog-content {
+    background-color: {{base_dark_hash}};
+}
+
+.dialog-vbox {
+    background-color: {{base_dark_hash}};
+}
+
+.dialog-action-area {
+    background-color: {{base_dark_hash}};
+}
+
+/* Message dialogs */
+.message-dialog {
+    background-color: {{base_dark_hash}};
+}
+
+.message-dialog .dialog-content {
+    background-color: {{base_dark_hash}};
+}
+
+/* About dialogs */
+.about-dialog {
+    background-color: {{base_dark_hash}};
+}
+
+/* Preferences/Settings dialogs */
+.preferences-dialog,
+.settings-dialog {
+    background-color: {{base_dark_hash}};
+}
+
+/* Color chooser dialog */
+colorchooser {
+    background-color: {{base_dark_hash}};
+}
+
+/* Font chooser dialog */
+fontchooser {
+    background-color: {{base_dark_hash}};
+}
+
+/* Print dialog */
+.print-dialog {
+    background-color: {{base_dark_hash}};
+}
+
+/* Assistant/Wizard dialogs */
+assistant {
+    background-color: {{base_dark_hash}};
+}
+
+/* Toolbar styling */
+toolbar {
+    background-color: {{base_dark_hash}};
+}
+
+.primary-toolbar {
+    background-color: {{base_dark_hash}};
+}
+
+/* Menubar */
+menubar {
+    background-color: {{base_dark_hash}};
+}
+
+/* Statusbar */
+statusbar {
+    background-color: {{base_dark_hash}};
+}
+
+/* Infobar */
+infobar {
+    background-color: {{base_dark_hash}};
+}
+
+/* Notebook (tabs) */
+notebook {
+    background-color: {{base_dark_hash}};
+}
+
+notebook header {
+    background-color: {{base_dark_hash}};
+}
+
+notebook tab {
+    background-color: {{base_dark_hash}};
+}
+
+notebook tab:checked {
+    background-color: {{base_middle_hash}};
+}
+
+/* Paned containers */
+paned {
+    background-color: {{base_dark_hash}};
+}
+
+/* Scrolled windows */
+scrolledwindow {
+    background-color: {{base_dark_hash}};
+}
+
+/* Text views and entry fields background (optional - be careful with text readability) */
+textview text {
+    background-color: {{base_dark_hash}};
+}
+
+/* List boxes and tree views */
+listbox {
+    background-color: {{base_dark_hash}};
+}
+
+listbox row {
+    background-color: {{base_dark_hash}};
+}
+
+listbox row:selected {
+    background-color: {{base_middle_hash}};
+}
+
+treeview {
+    background-color: {{base_dark_hash}};
+}
+
+treeview:selected {
+    background-color: {{base_middle_hash}};
+}
+
+/* Flow boxes */
+flowbox {
+    background-color: {{base_dark_hash}};
+}
+
+flowbox flowboxchild {
+    background-color: {{base_dark_hash}};
+}
+
+flowbox flowboxchild:selected {
+    background-color: {{base_middle_hash}};
+}
+
+/* Icon views */
+iconview {
+    background-color: {{base_dark_hash}};
+}
+
+iconview:selected {
+    background-color: {{base_middle_hash}};
+}
+
+/* Frames */
+frame {
+    background-color: {{base_dark_hash}};
+}
+
+/* Buttons (optional - only background, preserve text colors) */
+button {
+    background-color: {{base_dark_hash}};
+}
+
+button:hover {
+    background-color: {{base_middle_hash}};
+}
+
+button:active {
+    background-color: {{base_middle_hash}};
+}
+
+/* Entries/Input fields */
+entry {
+    background-color: {{base_dark_hash}};
+}
+
+/* Comboboxes */
+combobox {
+    background-color: {{base_dark_hash}};
+}
+
+combobox box {
+    background-color: {{base_dark_hash}};
+}
+
+/* Spinbuttons */
+spinbutton {
+    background-color: {{base_dark_hash}};
+}
+
+/* Progress bars container */
+progressbar {
+    background-color: {{base_dark_hash}};
+}
+
+/* Scale/Slider container */
+scale {
+    background-color: {{base_dark_hash}};
+}
+
+/* Calendar widget */
+calendar {
+    background-color: {{base_dark_hash}};
+}
+
+/* Application-specific dialogs */
+.app-notification {
+    background-color: {{base_dark_hash}};
+}
+
+/* Revealer containers */
+revealer {
+    background-color: {{base_dark_hash}};
+}
+
+/* Stack containers */
+stack {
+    background-color: {{base_dark_hash}};
+}
+
+/* Overlay containers */
+overlay {
+    background-color: {{base_dark_hash}};
+}
+
+/* Fixed containers */
+fixed {
+    background-color: {{base_dark_hash}};
+}
+
+/* Grid containers */
+grid {
+    background-color: {{base_dark_hash}};
+}
+
+/* Box containers */
+box {
+    background-color: {{base_dark_hash}};
+}
+
 /* Preserve original text colors by not overriding them */
 /* The theme will use GTK's default text colors */
